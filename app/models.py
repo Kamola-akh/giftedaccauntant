@@ -38,7 +38,7 @@ class Contact(BaseModel):
 
 
 class News(BaseModel):
-    title = models.CharField(max_length=500)
+    title = models.CharField(max_length=50)
     description = models.TextField(null=True, blank=True)
     image = models.ImageField(upload_to="image", null=True, blank=True)
 
@@ -63,42 +63,39 @@ class News(BaseModel):
         verbose_name_plural = "News"
 
 
-class ServiceTariff(BaseModel):
-    class CategoryChoice(models.IntegerChoices):
-        IT_PARK = 1, "IT Park"
+#
+class Tarif(models.Model):
+    tarif_name = models.CharField(max_length=200)
+    final_field_1 = models.CharField(max_length=200)
+    final_field_2 = models.CharField(max_length=200)
+    final_field_3 = models.CharField(max_length=200)
+    final_field_4 = models.CharField(max_length=200)
 
-        IT_PARK1 = 2, "IT Park"
-        IT_PARK2 = 3, "IT Park"
-        IT_PARK3 = 4, "IT Park"
-        IT_PARK4 = 5, "IT Park"
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    class TitleChoices(models.IntegerChoices):
-        e = 1, "Бухгалтерский аутсорсинг для резидентов IT Park"
-        a = 2, "Бухгалтерский аутсорсинг для производственных предприятий"
-        b = 3, "Бухгалтерский аутсорсинг для оптовой торговли"
-        c = 4, "Бухгалтерский аутсорсинг для предприятий общепита"
-        d = 5, "Бухгалтерский аутсорсинг для предприятий оказывающие услуги"
+    def __str__(self):
+        return self.tarif_name
+
+
+class TarifProduct(models.Model):
+    tarif_id = models.ForeignKey(Tarif, on_delete=models.CASCADE)
+    name = models.CharField(max_length=80)
 
     class TurnoverChoices(models.IntegerChoices):
         INCLUDE = 1, "Включено"
         NOT_INCLUDED = 2, "Не включено"
 
-    name = models.CharField(max_length=500)
+    field_1 = models.IntegerField(choices=TurnoverChoices.choices)
+    field_2 = models.IntegerField(choices=TurnoverChoices.choices)
+    field_3 = models.IntegerField(choices=TurnoverChoices.choices)
+    field_4 = models.IntegerField(choices=TurnoverChoices.choices)
 
-    category = models.IntegerField(choices=CategoryChoice.choices)
-    title = models.IntegerField(choices=TitleChoices.choices)
-
-    field1 = models.IntegerField(choices=TurnoverChoices.choices)
-    field2 = models.IntegerField(choices=TurnoverChoices.choices)
-    field3 = models.IntegerField(choices=TurnoverChoices.choices)
-    field4 = models.IntegerField(choices=TurnoverChoices.choices)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.name}"
+        return self.name
 
     class Meta:
         db_table = "serviceTariff"
         verbose_name = "ServiceTariff"
         verbose_name_plural = "ServiceTariffs"
-
-

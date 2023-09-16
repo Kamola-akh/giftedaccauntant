@@ -1,16 +1,15 @@
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import generics, permissions, response, status
+from rest_framework import generics, permissions, response, status, viewsets
+from app.models import News, Contact, Tarif
+from app.serializers import NewsSerializer, ContactSerializer, TarifProductSerializer, TarifSerializer
 
-from app.models import News, Contact, ServiceTariff
-from app.serializers import NewsSerializer, ContactSerializer, ServiceTariffSerializer
-
-
+from app.models import TarifProduct
 from rest_framework import status
 from rest_framework.response import Response
 
 from rest_framework import generics, status
 from rest_framework.response import Response
-
 
 from rest_framework import generics, permissions
 
@@ -19,7 +18,6 @@ class ContactViewSet(generics.CreateAPIView):
     serializer_class = ContactSerializer
     queryset = Contact.objects.all()
     permission_classes = [permissions.AllowAny]
-
 
 
 # Define a view for listing news items (GET request)
@@ -38,24 +36,44 @@ class NewsDetailView(generics.RetrieveAPIView):
 
 
 # Define a custom view for serving service tariff data (GET request)
-class ServiceTariffViews(generics.GenericAPIView):
-    serializer_class = ServiceTariffSerializer  # Use the ServiceTariffSerializer to serialize the data
-    permission_classes = [permissions.AllowAny]  # Allow any user to access this view
+# class ServiceTariffViews(generics.GenericAPIView):
+#     serializer_class = ServiceTariffSerializer  # Use the ServiceTariffSerializer to serialize the data
+#     permission_classes = [permissions.AllowAny]  # Allow any user to access this view
+#
+#     def get_object(self):
+#         obj = ServiceTariff.objects.all()  # Retrieve all service tariff objects from the database
+#         return obj
+#
+#     def get(self, request):
+#         queryset = self.get_object()  # Get the service tariff queryset
+#         serialized_data = self.serializer_class(queryset, many=True)  # Serialize the queryset
+#
+#         return response.Response(
+#             data={
+#                 "success": True,
+#                 "err_code": 0,
+#                 "err_msg": "",
+#                 "data": serialized_data.data  # Include serialized data in the response
+#             },
+#             status=status.HTTP_200_OK  # Set the HTTP status code to 200 (OK)
+#         )
 
-    def get_object(self):
-        obj = ServiceTariff.objects.all()  # Retrieve all service tariff objects from the database
-        return obj
 
+class TarifViews(APIView):
     def get(self, request):
-        queryset = self.get_object()  # Get the service tariff queryset
-        serialized_data = self.serializer_class(queryset, many=True)  # Serialize the queryset
-
+        tarif = Tarif.objects.all()
+        serializers = TarifSerializer(tarif, many=True)
         return response.Response(
-            data={
-                "success": True,
-                "err_code": 0,
-                "err_msg": "",
-                "data": serialized_data.data  # Include serialized data in the response
-            },
-            status=status.HTTP_200_OK  # Set the HTTP status code to 200 (OK)
+            data=serializers.data
+
+        )
+
+
+class TarifProductionViews(APIView):
+    def get(self, request):
+        tarif = TarifProduct.objects.all()
+        serializers = TarifProductSerializer(tarif, many=True)
+        return response.Response(
+            data=serializers.data
+
         )
